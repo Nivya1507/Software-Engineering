@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_IMAGE = "yourusername/jenkins-test-app"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from Git...'
+                checkout scm
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                script {
+                    echo "Building Docker Image: ${DOCKER_IMAGE}"
+                    sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo 'Running Mock Tests...'
+                // You would typically run npm test here
+                sh "echo 'Tests Passed!'"
+            }
+        }
+
+        stage('Deploy to Cloud') {
+            steps {
+                echo 'Deploying to Cloud Platform...'
+                // For AWS: sh "aws ecs update-service --cluster my-cluster..."
+                // For GCP: sh "gcloud run deploy..."
+                sh "echo 'Successfully deployed version ${BUILD_NUMBER}'"
+            }
+        }
+    }
+}
